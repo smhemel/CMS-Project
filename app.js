@@ -23,12 +23,18 @@ app.set('view engine', 'handlebars');
 
 //Upload Middleware
 app.use(upload());
-app.use(flash());
 
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
+
+app.use(session({
+    secret: 'Hemel1234Sm',
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(flash());
 
 const home = require('./routes/home/index');
 const admin = require('./routes/admin/index');

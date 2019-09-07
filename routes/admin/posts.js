@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../../models/Post');
 const Category = require('../../models/Category');
-const { isEmpty, uploadDir } = require('../../helpers/upload-helper');
+const {
+    isEmpty,
+    uploadDir
+} = require('../../helpers/upload-helper');
 const fs = require('fs');
 
 router.all('/*', (req, res, next) => {
@@ -12,8 +15,10 @@ router.all('/*', (req, res, next) => {
 
 
 router.get('/', (req, res) => {
-    Post.find({}).then(posts=> {
-        res.render('admin/posts', {posts: posts});
+    Post.find({}).then(posts => {
+        res.render('admin/posts', {
+            posts: posts
+        });
     })
 })
 
@@ -24,57 +29,82 @@ router.get('/create', (req, res) => {
 
 router.post('/create', (req, res) => {
 
-    let filename = 'bg.jpg';
+    let errors = [];
 
-    if(!isEmpty(req.files)) {
-
-        let file = req.files.file;
-        filename = Date.now() + '-' + file.name;
-        let dirUplaods = './public/uploads/';
-        file.mv(dirUplaods + filename, (err) => {
-            if(err) throw err;
+    if(!req.body.title) {
+        errors.push({
+            message: 'please add a title'
+        })
+    }
+    if(!req.body.body) {
+        errors.push({
+            message: 'please add Description'
+        })
+    }
+    if (errors.length > 0) {
+        res.render('admin/posts/create', {
+            errors: errors
         });
-    } 
-    
+    } else {
+        let filename = 'bg.jpg';
 
-    let allowComments = true;
-    if(req.body.allowComments) {
-        allowComments = true;
-    }
-    else { 
-        allowComments = false;
-    }
-    
-    const newPost = new Post({
-        title: req.body.title,
-        status: req.body.status,
-        allowComments: allowComments,
-        body: req.body.body,
-        file: filename
-    })
+        if (!isEmpty(req.files)) {
 
-    newPost.save().then(savedPost => {
-        console.log(savedPost);
-        res.redirect('/admin/posts');
-    }).catch(error => {
-        console.log(error);
-    })
+            let file = req.files.file;
+            filename = Date.now() + '-' + file.name;
+            let dirUplaods = './public/uploads/';
+            file.mv(dirUplaods + filename, (err) => {
+                if (err) throw err;
+            });
+        }
+
+
+        let allowComments = true;
+        if (req.body.allowComments) {
+            allowComments = true;
+        } else {
+            allowComments = false;
+        }
+
+        const newPost = new Post({
+            title: req.body.title,
+            status: req.body.status,
+            allowComments: allowComments,
+            body: req.body.body,
+            file: filename
+        })
+
+        newPost.save().then(savedPost => {
+            console.log(savedPost);
+            res.redirect('/admin/posts');
+        }).catch(error => {
+            console.log(error);
+        })
+
+    }
+
 
 });
 
 
 router.get('/edit/:id', (req, res) => {
 
-    Post.findOne({_id: req.params.id}).then(post => {
-        res.render('admin/posts/edit', {post: post});
+    Post.findOne({
+        _id: req.params.id
+    }).then(post => {
+        res.render('admin/posts/edit', {
+            post: post
+        });
     });
 })
 
 
 router.put('/edit/:id', (req, res) => {
-    Post.findOne({_id: req.params.id}).then(post => {
+    Post.findOne({
+        _id: req.params.id
+    }).then(post => {
 
-        if(req.body.allowComments) allowComments = true;
+        if (req.body.allowComments) allowComments = true;
         else allowComments = false;
 
         post.title = req.body.title;
@@ -90,7 +120,9 @@ router.put('/edit/:id', (req, res) => {
 
 
 router.delete('/:id', (req, res) => {
-    Post.findOne({_id: req.params.id})
+    Post.findOne({
+            _id: req.params.id
+        })
         .then(post => {
             fs.unlink(uploadDir + post.file, (err) => {
 
