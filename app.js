@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const {select} = require('./helpers/handlebars-helpers');
+const flash = require('connect-flash');
+const session = require('express-session');
 
 mongoose.Promise = global.Promise;
 
@@ -21,6 +23,7 @@ app.set('view engine', 'handlebars');
 
 //Upload Middleware
 app.use(upload());
+app.use(flash());
 
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -36,6 +39,6 @@ app.use('/admin',admin);
 app.use('/admin/posts', posts);
 
 
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log("Server Running...");
 });
