@@ -23,7 +23,10 @@ router.get('/', (req, res) => {
 })
 
 router.get('/create', (req, res) => {
-    res.render('admin/posts/create');
+    Category.find({}).then(categories => {
+        res.render('admin/posts/create', {categories: categories});
+    });
+    
 })
 
 
