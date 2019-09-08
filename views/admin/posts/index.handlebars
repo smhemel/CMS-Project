@@ -9,6 +9,7 @@
             <th>Title</th>
             <th>Status</th>
             <th>Allow Comments</th>
+            <th>Date</th>
         </tr>
     </thead>
 
@@ -20,6 +21,7 @@
             <td>{{title}}</td>
             <td>{{status}}</td>
             <td>{{allowComments}}</td>
+            <th>{{generateTime date 'MMMM Do YYYY'}}</th>
             <td><a href="/admin/posts/edit/{{id}}" class="btn btn-info">Edit</a></td>
             <td>
                 <form action="/admin/posts/{{id}}?_method=DELETE" method="post">
