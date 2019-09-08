@@ -6,7 +6,7 @@ const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
-const {select, generateTime} = require('./helpers/handlebars-helpers');
+const {select, generateDate} = require('./helpers/handlebars-helpers');
 const flash = require('connect-flash');
 const session = require('express-session');
 
@@ -17,7 +17,7 @@ mongoose.connect('mongodb://localhost:27017/cms', {useNewUrlParser: true}).then(
 }).catch(error => console.log(error));
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select: select, generateTime: generateTime}}));
+app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select: select, generateDate: generateDate}}));
 app.set('view engine', 'handlebars');
 
 
