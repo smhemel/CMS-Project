@@ -15,7 +15,9 @@ router.all('/*', (req, res, next) => {
 
 
 router.get('/', (req, res) => {
-    Post.find({}).then(posts => {
+    Post.find({})
+    .populate('category')
+    .then(posts => {
         res.render('admin/posts', {
             posts: posts
         });
@@ -74,6 +76,7 @@ router.post('/create', (req, res) => {
             status: req.body.status,
             allowComments: allowComments,
             body: req.body.body,
+            category: req.body.category,
             file: filename
         })
 
@@ -92,11 +95,11 @@ router.get('/edit/:id', (req, res) => {
     Post.findOne({
         _id: req.params.id
     }).then(post => {
-        res.render('admin/posts/edit', {
-            post: post
+        Category.find({}).then(categories=> {
+            res.render('admin/posts/edit', {post: post, categories: categories});
         });
     });
-})
+});
 
 
 router.put('/edit/:id', (req, res) => {
@@ -112,6 +115,7 @@ router.put('/edit/:id', (req, res) => {
         post.status = req.body.status;
         post.allowComments = allowComments;
         post.body = req.body.body;
+        post.category = req.body.category;
 
         if(!isEmpty(req.files)) {
             let file = req.files.file;
