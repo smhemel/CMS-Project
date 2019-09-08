@@ -36,6 +36,12 @@ app.use(session({
 }));
 app.use(flash());
 
+//Local Variables using Middleware
+app.use((req, res, next) => {
+    res.locals.success_message = req.flash('success_message');
+    next();
+});
+
 const home = require('./routes/home/index');
 const admin = require('./routes/admin/index');
 const posts = require('./routes/admin/posts');

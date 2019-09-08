@@ -75,15 +75,12 @@ router.post('/create', (req, res) => {
         })
 
         newPost.save().then(savedPost => {
-            console.log(savedPost);
+            req.flash('success_message', `${savedPost.title} was Created Successfully`);
             res.redirect('/admin/posts');
         }).catch(error => {
             console.log(error);
         })
-
     }
-
-
 });
 
 
@@ -100,6 +97,7 @@ router.get('/edit/:id', (req, res) => {
 
 
 router.put('/edit/:id', (req, res) => {
+
     Post.findOne({
         _id: req.params.id
     }).then(post => {
@@ -112,7 +110,20 @@ router.put('/edit/:id', (req, res) => {
         post.allowComments = allowComments;
         post.body = req.body.body;
 
+        if(!isEmpty(req.files)) {
+            let file = req.files.file;
+            filename = Date.now() + '-' + file.name;
+            post.file = filename;
+            file.mv('./public/uploads/' + filename, (err) => {
+                if(err) throw err;
+            });
+        }
+
+
         post.save().then(updatePost => {
+
+            req.flash('success_message', 'Post was Successfully updated');
+
             res.redirect('/admin/posts');
         });
     });
