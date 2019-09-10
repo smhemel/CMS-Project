@@ -22,6 +22,14 @@ router.get('/', (req, res) => {
     })
 })
 
+router.get('/my-posts', (req, res) => {
+    Post.find({_id: req.user.id})
+        .populate('category')
+        .then(posts => {
+            res.render('admin/my-posts', {posts: posts});
+        })
+})
+
 router.get('/create', (req, res) => {
     Category.find({}).then(categories => {
         res.render('admin/posts/create', {categories: categories});
@@ -70,6 +78,7 @@ router.post('/create', (req, res) => {
         }
 
         const newPost = new Post({
+            user: req.user.id,
             title: req.body.title,
             status: req.body.status,
             allowComments: allowComments,
@@ -109,6 +118,7 @@ router.put('/edit/:id', (req, res) => {
         if (req.body.allowComments) allowComments = true;
         else allowComments = false;
 
+        post.user = req.user.id;
         post.title = req.body.title;
         post.status = req.body.status;
         post.allowComments = allowComments;
@@ -139,14 +149,21 @@ router.delete('/:id', (req, res) => {
     Post.findOne({
             _id: req.params.id
         })
+        .populate('comments')
         .then(post => {
             fs.unlink(uploadDir + post.file, (err) => {
 
-                post.remove();
+                if(post.comments.length) {
+                    post.comments.forEach(comment => {
+                        comment.remove();
+                    });
+                }
 
-                //res.flash('success_message', 'Post was successfully deleted.');
-                res.redirect('/admin/posts');
-            })
+                post.remove().then(postRemoved =>{
+                    //res.flash('success_message', 'Post was successfully deleted.');
+                    res.redirect('/admin/posts');
+                });
+            });
         });
 });
 

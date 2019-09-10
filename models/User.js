@@ -25,4 +25,4 @@ UserSchema.methods.testMethod = () => {
     console.log('Hello')
 }
 
-module.exports = mongoose.model('users', UserSchema)
+module.exports = mongoose.model('users', UserSchema);
