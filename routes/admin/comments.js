@@ -26,9 +26,8 @@ router.post('/', (req, res) => {
     Post.findOne({_id: req.body.id}).then(post => {
         const newComment = new Comment({
             user: req.user.id,
-            body: req.user.body
+            body: req.body.body
         });
-
         post.comments.push(newComment);
         post.save().then(savedPost => {
 
@@ -49,6 +48,12 @@ router.delete('/:id', (req, res) => {
             res.redirect('/admin/comments');
         });
     });
+});
+
+
+
+router.get('/approve-comment', (req, res) => {
+    console.log("ami");
 });
 
 
